@@ -7,7 +7,9 @@ pydantic==2.7.4
 
 # Cliente oficial de OpenAI (SDK moderno >=1.x) para la clasificación
 # asistida por IA. El sistema funciona sin esta librería configurada
-# (ver AI_ENABLED en .env.example).
+# (ver AI_ENABLED en .env.example). El mismo cliente también se usa para
+# Google Gemini a través de su endpoint compatible con el SDK de OpenAI
+# (ver AI_PROVIDER=gemini en config.py) — no se necesita un SDK aparte.
 openai==1.109.1
 
 # Dependencias solo para pruebas automatizadas (pytest + TestClient de FastAPI)

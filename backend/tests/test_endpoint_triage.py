@@ -84,12 +84,38 @@ def test_estado_ia_no_expone_la_clave(client, app_module, monkeypatch):
     from app import config as config_module
 
     monkeypatch.setattr(config_module, "AI_ENABLED", True)
+    monkeypatch.setattr(config_module, "AI_PROVIDER", "openai")
     monkeypatch.setattr(config_module, "OPENAI_API_KEY", "clave-secreta-de-prueba")
 
     respuesta = client.get("/api/ai/status")
     assert respuesta.status_code == 200
     assert respuesta.json() == {"ai_enabled": True, "provider": "OpenAI", "configured": True}
     assert "clave-secreta-de-prueba" not in respuesta.text
+
+
+def test_estado_ia_refleja_proveedor_gemini_sin_exponer_la_clave(client, app_module, monkeypatch):
+    from app import config as config_module
+
+    monkeypatch.setattr(config_module, "AI_ENABLED", True)
+    monkeypatch.setattr(config_module, "AI_PROVIDER", "gemini")
+    monkeypatch.setattr(config_module, "GEMINI_API_KEY", "clave-secreta-de-gemini")
+
+    respuesta = client.get("/api/ai/status")
+    assert respuesta.status_code == 200
+    assert respuesta.json() == {"ai_enabled": True, "provider": "Gemini", "configured": True}
+    assert "clave-secreta-de-gemini" not in respuesta.text
+
+
+def test_estado_ia_gemini_sin_clave_no_configurado(client, app_module, monkeypatch):
+    from app import config as config_module
+
+    monkeypatch.setattr(config_module, "AI_ENABLED", True)
+    monkeypatch.setattr(config_module, "AI_PROVIDER", "gemini")
+    monkeypatch.setattr(config_module, "GEMINI_API_KEY", "")
+
+    respuesta = client.get("/api/ai/status")
+    assert respuesta.status_code == 200
+    assert respuesta.json() == {"ai_enabled": True, "provider": "Gemini", "configured": False}
 
 
 def test_dashboard_estadisticas_sigue_funcionando(client, app_module, monkeypatch):

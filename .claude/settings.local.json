@@ -39,7 +39,26 @@
       "Bash(ps -W)",
       "Bash(taskkill //F //PID 21720)",
       "Bash(taskkill //F //PID 17920)",
-      "Bash(curl -s http://127.0.0.1:8001/api/ai/status)"
+      "Bash(curl -s http://127.0.0.1:8001/api/ai/status)",
+      "Bash(curl -s -i http://127.0.0.1:8001/estadisticas -H \"Origin: http://localhost:5174\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:5174/)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:5174/triage)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:5174/dashboard)",
+      "Bash(curl -s -i -X POST http://127.0.0.1:8001/triage -H 'Content-Type: application/json' -H 'Origin: http://localhost:5174' -d '{ *)",
+      "Bash(awk '{print $5}')",
+      "Bash(taskkill //F //PID 22896)",
+      "Bash(taskkill //F //PID 11760)",
+      "Bash(taskkill //F //PID 22144)",
+      "Bash(taskkill //F //PID 10756)",
+      "Bash(taskkill //F //PID 18600)",
+      "Bash(taskkill //F //PID 23316)",
+      "Bash(taskkill //F //PID 8704)",
+      "Bash(taskkill //F //PID 24224)",
+      "Bash(taskkill //F //PID 23848)",
+      "Bash(taskkill //F //PID 25700)",
+      "Bash(nohup .venv/Scripts/python.exe -m uvicorn app.main:app --reload --port 8001)",
+      "Bash(taskkill //F //PID 28628)",
+      "Bash(taskkill //F //PID 4452)"
     ]
   }
 }

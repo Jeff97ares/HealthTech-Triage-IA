@@ -1,4 +1,10 @@
-"""Servicio de clasificación asistida por IA (OpenAI) para HealthTech Triage.
+"""Servicio de clasificación asistida por IA para HealthTech Triage.
+
+Soporta dos proveedores intercambiables (ver AI_PROVIDER en config.py):
+OpenAI directamente, o Google Gemini a través de su endpoint compatible
+con el SDK de OpenAI (mismo cliente `openai.OpenAI`, solo cambia
+base_url/api_key/modelo). Por eso todo este archivo usa un único cliente
+y un único bloque de manejo de errores para ambos proveedores.
 
 Este servicio es un apoyo OPCIONAL sobre el motor de reglas
 (triage_engine.py). Si la IA no está configurada, falla, tarda demasiado
@@ -100,12 +106,21 @@ def analizar_con_ia(datos: dict) -> Optional[IARespuesta]:
         return None
 
     payload = _payload_clinico(datos)
+    credenciales = config.credenciales_activas()
+    proveedor = config.proveedor_activo_label()
 
     try:
-        cliente = OpenAI(api_key=config.OPENAI_API_KEY, timeout=config.AI_TIMEOUT_SECONDS)
+        argumentos_cliente = {
+            "api_key": credenciales["api_key"],
+            "timeout": config.AI_TIMEOUT_SECONDS,
+        }
+        if credenciales["base_url"]:
+            argumentos_cliente["base_url"] = credenciales["base_url"]
+
+        cliente = OpenAI(**argumentos_cliente)
 
         respuesta = cliente.chat.completions.create(
-            model=config.OPENAI_MODEL,
+            model=credenciales["model"],
             messages=[
                 {"role": "system", "content": MENSAJE_SISTEMA},
                 {"role": "user", "content": json.dumps(payload, ensure_ascii=False)},
@@ -119,20 +134,20 @@ def analizar_con_ia(datos: dict) -> Optional[IARespuesta]:
         return IARespuesta.model_validate(datos_ia)
 
     except openai.AuthenticationError:
-        logger.warning("IA no disponible: clave de OpenAI inválida o no autorizada.")
+        logger.warning("IA no disponible (%s): clave inválida o no autorizada.", proveedor)
     except openai.RateLimitError:
-        logger.warning("IA no disponible: límite de uso de OpenAI alcanzado.")
+        logger.warning("IA no disponible (%s): límite de uso o cuota alcanzada.", proveedor)
     except openai.NotFoundError:
-        logger.warning("IA no disponible: el modelo configurado no está disponible.")
+        logger.warning("IA no disponible (%s): el modelo configurado no está disponible.", proveedor)
     except openai.APITimeoutError:
-        logger.warning("IA no disponible: tiempo de espera agotado.")
+        logger.warning("IA no disponible (%s): tiempo de espera agotado.", proveedor)
     except openai.APIConnectionError:
-        logger.warning("IA no disponible: error de conexión con OpenAI.")
+        logger.warning("IA no disponible (%s): error de conexión.", proveedor)
     except openai.APIStatusError as error:
-        logger.warning("IA no disponible: OpenAI devolvió un error (%s).", error.status_code)
+        logger.warning("IA no disponible (%s): error del proveedor (%s).", proveedor, error.status_code)
     except (json.JSONDecodeError, ValidationError):
-        logger.warning("IA no disponible: la respuesta del modelo no tiene el formato esperado.")
+        logger.warning("IA no disponible (%s): la respuesta no tiene el formato esperado.", proveedor)
     except Exception:
-        logger.warning("IA no disponible: error inesperado al consultar el modelo.")
+        logger.warning("IA no disponible (%s): error inesperado al consultar el modelo.", proveedor)
 
     return None

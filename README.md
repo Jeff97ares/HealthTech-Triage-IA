@@ -14,11 +14,15 @@ el tipo de atención médica (emergencia, presencial o virtual).
   Resultado, Dashboard).
 - **Backend**: Python + FastAPI.
 - **Base de datos**: PostgreSQL (tabla `triage_records`).
-- **IA**: motor híbrido reglas + LLM (OpenAI, SDK oficial `openai>=1.x`).
+- **IA**: motor híbrido reglas + LLM. Proveedor intercambiable mediante
+  `AI_PROVIDER`: **Google Gemini** (por defecto en este proyecto) u
+  **OpenAI**, ambos a través del mismo cliente `openai>=1.x` (Gemini expone
+  un endpoint compatible con el SDK de OpenAI, así que no se necesita una
+  librería adicional).
 
 ```
 React (5174)  →  FastAPI (8001)  →  Motor de reglas (siempre)
-                                  →  LLM de OpenAI (opcional, si está configurado)
+                                  →  LLM (Gemini u OpenAI, opcional, según AI_PROVIDER)
                                   →  Motor híbrido (combina ambos)
                                   →  PostgreSQL (5434)
 ```
@@ -31,6 +35,9 @@ La IA (`backend/app/services/ai_triage_service.py`) es un apoyo **opcional**:
 recibe únicamente datos clínicos (edad, síntoma principal, descripción,
 intensidad del dolor y las 4 señales de alarma) — **nunca el nombre del
 paciente** — y devuelve una sugerencia estructurada y validada con Pydantic.
+El proveedor (Gemini u OpenAI) es intercambiable con `AI_PROVIDER`; el resto
+del sistema (reglas, motor híbrido, endpoints, frontend) no cambia según el
+proveedor elegido.
 
 `backend/app/triage_hibrido.py` combina ambos resultados aplicando siempre
 el **principio de mayor seguridad**: se usa el nivel más severo entre reglas
@@ -49,8 +56,9 @@ nunca queda inutilizable por un error de la IA.
 - Node.js 18 o superior
 - PostgreSQL 14 o superior (servidor corriendo localmente)
 - npm (incluido con Node.js)
-- (Opcional) una clave de API de OpenAI, solo si quieres activar la
-  clasificación asistida por IA
+- (Opcional) una clave de API de Google Gemini u OpenAI, solo si quieres
+  activar la clasificación asistida por IA (no se necesitan las dos: solo
+  la del proveedor que elijas en `AI_PROVIDER`)
 
 ## 2. Crear la base de datos PostgreSQL
 
@@ -90,8 +98,14 @@ DATABASE_URL=postgresql://postgres@127.0.0.1:5434/healthtech_triage
 FRONTEND_URL=http://localhost:5174
 
 AI_ENABLED=false
+AI_PROVIDER=gemini
+
+GEMINI_API_KEY=
+GEMINI_MODEL=gemini-flash-latest
+
 OPENAI_API_KEY=
 OPENAI_MODEL=gpt-4o-mini
+
 AI_TIMEOUT_SECONDS=8
 ```
 
@@ -107,16 +121,34 @@ VITE_API_URL=http://localhost:8001
 > (backend/.env) para que coincidan con los puertos reales que muestran las
 > terminales al iniciar cada servidor.
 
-### Cómo obtener y colocar tu clave de OpenAI (sin publicarla)
+### Cómo elegir el proveedor de IA: Gemini u OpenAI
 
-1. Crea una clave en <https://platform.openai.com/api-keys> (requiere una
-   cuenta de OpenAI con facturación configurada).
-2. Pégala en `backend/.env` (nunca en `backend/.env.example`, nunca en el
-   código, nunca en el frontend):
+`AI_PROVIDER` decide cuál se usa. Solo hace falta configurar la clave del
+proveedor elegido; la del otro puede quedar vacía.
+
+```
+AI_PROVIDER=gemini   # usa GEMINI_API_KEY / GEMINI_MODEL
+AI_PROVIDER=openai   # usa OPENAI_API_KEY / OPENAI_MODEL
+```
+
+Internamente ambos usan el mismo cliente (`openai>=1.x`): Gemini se
+consulta a través de su [endpoint compatible con el SDK de
+OpenAI](https://ai.google.dev/gemini-api/docs/openai), así que no hace
+falta instalar una librería adicional ni tocar el resto del código para
+cambiar de proveedor.
+
+### Cómo crear y colocar tu clave de Gemini (sin publicarla)
+
+1. Crea una clave gratis en <https://aistudio.google.com/apikey> (solo
+   necesitas una cuenta de Google; a diferencia de OpenAI, Gemini ofrece
+   un nivel gratuito con límites de uso, sin tarjeta de crédito).
+2. Pégala en `backend/.env` — **exactamente aquí, en este archivo, nunca en
+   el chat, en `backend/.env.example`, en el código ni en el frontend**:
    ```
    AI_ENABLED=true
-   OPENAI_API_KEY=sk-tu-clave-real-aqui
-   OPENAI_MODEL=gpt-4o-mini
+   AI_PROVIDER=gemini
+   GEMINI_API_KEY=tu-clave-real-aqui
+   GEMINI_MODEL=gemini-flash-latest
    ```
 3. `backend/.env` está en `.gitignore` (junto con cualquier `.env*`, excepto
    los `.env.example`), así que `git status` nunca debería mostrarlo. Antes
@@ -125,15 +157,42 @@ VITE_API_URL=http://localhost:8001
    git status
    ```
 4. La clave se lee únicamente desde variables de entorno
-   (`backend/app/config.py`); nunca se imprime en logs ni se envía al
-   frontend. El endpoint `GET /api/ai/status` confirma si está configurada
-   sin revelarla.
+   (`backend/app/config.py`); nunca se imprime en logs, ni en errores, ni se
+   envía al frontend. El endpoint `GET /api/ai/status` confirma si está
+   configurada sin revelarla.
+
+### Cómo obtener y colocar tu clave de OpenAI (alternativa)
+
+1. Crea una clave en <https://platform.openai.com/api-keys> (requiere una
+   cuenta de OpenAI con facturación activa; a diferencia de Gemini, no
+   tiene nivel gratuito).
+2. Pégala en `backend/.env` y cambia el proveedor activo:
+   ```
+   AI_ENABLED=true
+   AI_PROVIDER=openai
+   OPENAI_API_KEY=sk-tu-clave-real-aqui
+   OPENAI_MODEL=gpt-4o-mini
+   ```
+3. La integración de OpenAI se conserva completa (no se eliminó nada): solo
+   cambia `AI_PROVIDER` para volver a usarla en cualquier momento.
 
 ### Cómo desactivar temporalmente la IA
 
-Pon `AI_ENABLED=false` en `backend/.env` (o simplemente deja
-`OPENAI_API_KEY` vacío) y reinicia el backend. El sistema seguirá
-funcionando exactamente igual, usando solo el motor de reglas.
+Pon `AI_ENABLED=false` en `backend/.env` (o simplemente deja vacía la clave
+del proveedor activo) y reinicia el backend. El sistema seguirá funcionando
+exactamente igual, usando solo el motor de reglas.
+
+### Cómo funciona el respaldo por reglas
+
+`analizar_con_ia()` (en `ai_triage_service.py`) siempre devuelve `None` —
+nunca lanza una excepción — cuando: la IA está deshabilitada, falta la
+clave del proveedor activo, la clave es inválida, se agota el tiempo de
+espera, se supera la cuota/límite de uso, el modelo configurado no existe,
+o la respuesta no es un JSON válido con la estructura esperada. El
+endpoint `POST /triage` trata ese `None` exactamente igual que "la IA no
+respondió": usa solo el resultado del motor de reglas y guarda el registro
+con `fuente_clasificacion = "REGLAS"`. El formulario nunca se rompe ni
+queda inutilizable por un fallo de la IA.
 
 ## 6. Ejecutar FastAPI
 
@@ -201,16 +260,23 @@ cd backend
 pytest -v
 ```
 
-Las pruebas **nunca llaman a la API real de OpenAI** (todo se simula con
-mocks) y **nunca usan la base de datos real**: crean automáticamente una
-base de datos aislada (`healthtech_triage_test`) antes de correr, y la
-eliminan al finalizar. `healthtech_triage` no se toca en ningún momento.
+Las pruebas **nunca llaman a la API real de Gemini ni de OpenAI** (todo se
+simula con mocks) y **nunca usan la base de datos real**: crean
+automáticamente una base de datos aislada (`healthtech_triage_test`) antes
+de correr, y la eliminan al finalizar. `healthtech_triage` no se toca en
+ningún momento. Las variables de IA también se aíslan (`conftest.py` las
+fuerza a un estado neutro), así que las pruebas no dependen de las claves
+reales que tengas en `backend/.env`.
 
-Casos cubiertos: los 4 niveles del motor de reglas, que la IA nunca puede
-reducir una clasificación Rojo, que la IA puede elevar la prioridad, que el
-sistema funciona sin clave API / con `AI_ENABLED=false` / cuando la API
-falla o responde algo inválido, que el nombre del paciente nunca se envía
-al LLM, y que los registros se guardan correctamente en PostgreSQL.
+Casos cubiertos: los 4 niveles del motor de reglas; que la IA (Gemini u
+OpenAI) nunca puede reducir una clasificación Rojo y sí puede elevar la
+prioridad; que el sistema funciona sin clave API, con `AI_ENABLED=false`,
+o con `AI_PROVIDER=gemini` sin `GEMINI_API_KEY`; respuestas simuladas de
+cuota excedida, clave inválida y JSON inválido para ambos proveedores; que
+en todos esos casos se usa el respaldo por reglas; que el nombre del
+paciente nunca se envía al LLM; que `GET /api/ai/status` refleja el
+proveedor activo sin exponer la clave; y que los registros se guardan
+correctamente en PostgreSQL.
 
 ## Endpoints de la API
 
@@ -229,9 +295,16 @@ al LLM, y que los registros se guardan correctamente en PostgreSQL.
 | `DATABASE_URL`         | Sí        | Cadena de conexión a PostgreSQL                            |
 | `FRONTEND_URL`         | Sí        | Origen permitido para CORS                                 |
 | `AI_ENABLED`           | No        | `true`/`false`. Si es `false`, se usa solo el motor de reglas |
-| `OPENAI_API_KEY`       | No        | Clave de OpenAI. Sin ella, la IA queda deshabilitada        |
-| `OPENAI_MODEL`         | No        | Modelo a usar (por defecto `gpt-4o-mini`)                   |
+| `AI_PROVIDER`          | No        | `gemini` (por defecto en este proyecto) u `openai`          |
+| `GEMINI_API_KEY`       | No        | Clave de Gemini. Necesaria solo si `AI_PROVIDER=gemini`     |
+| `GEMINI_MODEL`         | No        | Modelo de Gemini (por defecto `gemini-flash-latest`)           |
+| `OPENAI_API_KEY`       | No        | Clave de OpenAI. Necesaria solo si `AI_PROVIDER=openai`     |
+| `OPENAI_MODEL`         | No        | Modelo de OpenAI (por defecto `gpt-4o-mini`)                |
 | `AI_TIMEOUT_SECONDS`   | No        | Tiempo máximo de espera a la IA (por defecto `8` segundos)  |
+
+Sin importar el proveedor, si falta su clave, falla, se agota el tiempo de
+espera, se supera la cuota, o responde algo inválido, el sistema usa
+únicamente el motor de reglas — nunca deja el formulario inutilizable.
 
 ## Estructura del proyecto
 
@@ -245,7 +318,7 @@ healthtech-triage/
 │   │   ├── triage_engine.py      Motor de reglas (seguridad)
 │   │   ├── triage_hibrido.py     Combina reglas + IA
 │   │   └── services/
-│   │       └── ai_triage_service.py   Cliente de OpenAI + validación
+│   │       └── ai_triage_service.py   Cliente Gemini/OpenAI + validación
 │   └── tests/                    Pruebas automatizadas (pytest)
 ├── database/       schema.sql de referencia
 ├── README.md
@@ -256,8 +329,8 @@ healthtech-triage/
 ## Seguridad y privacidad
 
 - El nombre del paciente **nunca** se envía a la IA; solo datos clínicos.
-- La clave de OpenAI se lee únicamente desde variables de entorno del
-  backend; nunca se expone en el frontend ni en el código fuente.
+- Las claves de Gemini/OpenAI se leen únicamente desde variables de entorno
+  del backend; nunca se exponen en el frontend ni en el código fuente.
 - Los archivos `.env` reales están excluidos de Git (`.gitignore`); solo
   los `.env.example` (sin claves reales) se versionan.
 - Los datos médicos completos no se imprimen en los logs del backend; solo

@@ -64,10 +64,17 @@ def _crear_base_de_datos_prueba():
 
 # Se ejecuta al importar conftest.py, ANTES de que los módulos de prueba
 # importen app.main/app.database, para que usen la base de datos de prueba.
+#
+# Las variables de IA se fuerzan (no solo setdefault) para que las pruebas
+# sean 100% deterministas y nunca dependan de las claves reales del .env
+# del desarrollador; cada prueba que necesita un proveedor/estado concreto
+# lo configura explícitamente con monkeypatch.
 _crear_base_de_datos_prueba()
 os.environ["DATABASE_URL"] = _DATABASE_URL_PRUEBA
-os.environ.setdefault("AI_ENABLED", "false")
-os.environ.setdefault("OPENAI_API_KEY", "")
+os.environ["AI_ENABLED"] = "false"
+os.environ["AI_PROVIDER"] = "openai"
+os.environ["OPENAI_API_KEY"] = ""
+os.environ["GEMINI_API_KEY"] = ""
 os.environ.setdefault("FRONTEND_URL", "http://localhost:5174")
 
 

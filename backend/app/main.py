@@ -49,7 +49,7 @@ def estado_ia():
     exponer la clave API)."""
     return schemas.EstadoIA(
         ai_enabled=config.AI_ENABLED,
-        provider="OpenAI",
+        provider=config.proveedor_activo_label(),
         configured=config.ai_configurada(),
     )
 
