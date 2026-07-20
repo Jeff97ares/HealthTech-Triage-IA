@@ -112,6 +112,7 @@ export default function Dashboard() {
                 <th>Síntoma principal</th>
                 <th>Nivel</th>
                 <th>Recomendación</th>
+                <th>Fuente</th>
                 <th>Fecha</th>
               </tr>
             </thead>
@@ -125,6 +126,15 @@ export default function Dashboard() {
                     <UrgencyBadge nivel={registro.nivel} size="sm" />
                   </td>
                   <td>{registro.recomendacion}</td>
+                  <td>
+                    <span
+                      className={`fuente-badge ${
+                        registro.fuente_clasificacion === "HIBRIDA" ? "fuente-ia" : "fuente-reglas"
+                      }`}
+                    >
+                      {registro.fuente_clasificacion === "HIBRIDA" ? "🤖 IA + reglas" : "📋 Solo reglas"}
+                    </span>
+                  </td>
                   <td>{new Date(registro.fecha_creacion).toLocaleString("es-ES")}</td>
                 </tr>
               ))}

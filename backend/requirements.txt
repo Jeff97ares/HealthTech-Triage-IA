@@ -4,3 +4,12 @@ sqlalchemy==2.0.30
 psycopg2-binary==2.9.9
 python-dotenv==1.0.1
 pydantic==2.7.4
+
+# Cliente oficial de OpenAI (SDK moderno >=1.x) para la clasificación
+# asistida por IA. El sistema funciona sin esta librería configurada
+# (ver AI_ENABLED en .env.example).
+openai==1.109.1
+
+# Dependencias solo para pruebas automatizadas (pytest + TestClient de FastAPI)
+pytest==8.4.2
+httpx==0.28.1

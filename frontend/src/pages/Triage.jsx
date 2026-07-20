@@ -220,7 +220,9 @@ export default function Triage() {
       <p className="aviso-legal">
         <span aria-hidden="true">ℹ️</span>
         Este sistema es un prototipo académico y no reemplaza la evaluación
-        de un profesional de salud.
+        de un profesional de salud. Los datos clínicos (sin tu nombre) pueden
+        enviarse a un proveedor de IA solo como apoyo a la clasificación; no
+        se usan para entrenar modelos.
       </p>
     </div>
   );

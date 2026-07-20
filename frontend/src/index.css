@@ -762,6 +762,46 @@ form.formulario {
   margin-bottom: 0.2rem;
 }
 
+/* Bloque de clasificación asistida por IA (Resultado) */
+.bloque-ia {
+  text-align: left;
+  margin-top: 1.5rem;
+  padding: 1rem 1.1rem;
+  border-radius: var(--radius-md);
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  font-size: 0.92rem;
+  color: var(--color-text-muted);
+}
+
+.bloque-ia-activo {
+  background-color: var(--color-accent-light);
+  border-color: var(--color-accent);
+  color: var(--color-text);
+}
+
+.etiqueta-ia {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+  margin-bottom: 0.6rem;
+}
+
+.bloque-ia p {
+  margin: 0 0 0.5rem;
+}
+
+.tipo-atencion {
+  color: var(--color-text);
+}
+
+.lista-senales {
+  margin: 0.35rem 0 0;
+  padding-left: 1.2rem;
+}
+
 /* ==========================================================================
    Dashboard
    ========================================================================== */
@@ -909,5 +949,27 @@ table.tabla-registros tbody tr:last-child td {
   color: var(--color-surface);
   font-weight: 700;
   font-size: 0.82rem;
+}
+
+.fuente-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.fuente-badge.fuente-ia {
+  background-color: var(--color-accent-light);
+  color: var(--color-primary-dark);
+}
+
+.fuente-badge.fuente-reglas {
+  background-color: var(--color-bg);
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
 }
 

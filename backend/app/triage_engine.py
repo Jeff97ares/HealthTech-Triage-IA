@@ -63,3 +63,35 @@ def clasificar_triage(
         "recomendacion": "Programar una consulta presencial.",
         "explicacion": "No fue posible determinar con certeza la gravedad; se recomienda evaluación presencial.",
     }
+
+
+# Color y recomendación estándar por nivel. Se usa únicamente cuando el
+# motor híbrido (triage_hibrido.py) necesita re-etiquetar un nivel que la
+# IA elevó por encima del resultado de clasificar_triage(); no reemplaza
+# ni modifica la lógica de reglas de arriba.
+NIVELES_INFO = {
+    "Rojo": {
+        "color": "#e53935",
+        "recomendacion": "Acudir inmediatamente a emergencias.",
+    },
+    "Naranja": {
+        "color": "#fb8c00",
+        "recomendacion": "Recibir atención presencial prioritaria.",
+    },
+    "Amarillo": {
+        "color": "#fdd835",
+        "recomendacion": "Programar una consulta presencial.",
+    },
+    "Verde": {
+        "color": "#43a047",
+        "recomendacion": "Puede recibir consulta virtual o seguimiento en casa.",
+    },
+}
+
+
+def detalle_por_nivel(nivel: str) -> dict:
+    """Devuelve color y recomendación estándar para un nivel (Rojo/Naranja/
+    Amarillo/Verde). Usado solo para construir el resultado final del motor
+    híbrido cuando la IA escala la prioridad del resultado de reglas.
+    """
+    return NIVELES_INFO.get(nivel, NIVELES_INFO["Amarillo"])

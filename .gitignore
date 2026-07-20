@@ -1,7 +1,7 @@
-# Entornos y variables sensibles
+# Entornos y variables sensibles (nunca subir claves/contraseñas reales)
 .env
-backend/.env
-frontend/.env
+.env.*
+!.env.example
 
 # Python
 __pycache__/
@@ -11,7 +11,7 @@ venv/
 
 # Node / frontend
 node_modules/
-frontend/dist/
+dist/
 
 # Editores y sistema operativo
 .vscode/

@@ -1,7 +1,8 @@
 """Esquemas Pydantic para validación de entrada/salida de la API."""
+import json
 from datetime import datetime
-from typing import Optional
-from pydantic import BaseModel, Field, ConfigDict
+from typing import List, Optional
+from pydantic import BaseModel, Field, ConfigDict, field_validator
 
 
 class TriageInput(BaseModel):
@@ -37,6 +38,31 @@ class TriageOutput(BaseModel):
     explicacion: str
     fecha_creacion: datetime
 
+    # Campos del motor híbrido (reglas + IA). Todos opcionales para no
+    # romper registros creados antes de esta funcionalidad.
+    clasificacion_reglas: Optional[str] = None
+    clasificacion_ia: Optional[str] = None
+    fuente_clasificacion: str = "REGLAS"
+    explicacion_ia: Optional[str] = None
+    tipo_atencion: Optional[str] = None
+    senales_alerta: Optional[List[str]] = None
+    confianza_ia: Optional[float] = None
+
+    @field_validator("senales_alerta", mode="before")
+    @classmethod
+    def _parsear_senales_alerta(cls, valor):
+        """La columna se guarda como texto JSON; se convierte a lista para
+        el frontend. Si el valor no es un JSON válido, se ignora."""
+        if valor is None or isinstance(valor, list):
+            return valor
+        if isinstance(valor, str):
+            try:
+                datos = json.loads(valor)
+                return datos if isinstance(datos, list) else None
+            except json.JSONDecodeError:
+                return None
+        return None
+
 
 class Estadisticas(BaseModel):
     total: int
@@ -44,3 +70,9 @@ class Estadisticas(BaseModel):
     naranja: int
     amarillo: int
     verde: int
+
+
+class EstadoIA(BaseModel):
+    ai_enabled: bool
+    provider: str = "OpenAI"
+    configured: bool
