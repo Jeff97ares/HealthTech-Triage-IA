@@ -1,0 +1,913 @@
+/* ==========================================================================
+   HealthTech Triage — Design tokens
+   ========================================================================== */
+:root {
+  /* Paleta principal: azul petróleo + turquesa + blanco */
+  --color-primary: #0f6e8c;
+  --color-primary-dark: #0a4d61;
+  --color-primary-light: #e6f2f5;
+  --color-accent: #0d9488;
+  --color-accent-light: #ccfbf1;
+
+  --color-bg: #f7fafc;
+  --color-surface: #ffffff;
+  --color-border: #e2e8f0;
+  --color-text: #1e293b;
+  --color-text-muted: #5b6b76;
+
+  /* Niveles de urgencia (colores exactos requeridos) */
+  --color-rojo: #dc2626;
+  --color-naranja: #f97316;
+  --color-amarillo: #eab308;
+  --color-verde: #16a34a;
+
+  --color-danger-bg: #fef2f2;
+  --color-danger-text: #b91c1c;
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-pill: 999px;
+
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 6px 20px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.12);
+
+  --font-sans: "Segoe UI", -apple-system, BlinkMacSystemFont, "Inter", system-ui,
+    sans-serif;
+
+  font-family: var(--font-sans);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  color: var(--color-primary-dark);
+  line-height: 1.25;
+  margin: 0 0 0.5rem;
+}
+
+p {
+  margin: 0 0 0.5rem;
+}
+
+a {
+  color: var(--color-primary);
+}
+
+button {
+  font-family: inherit;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ==========================================================================
+   Layout
+   ========================================================================== */
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.container {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 3rem;
+  width: 100%;
+  flex: 1;
+}
+
+.container--angosto {
+  max-width: 640px;
+}
+
+/* ==========================================================================
+   Navbar
+   ========================================================================== */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  padding: 0.85rem 1.5rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-primary-dark);
+  font-weight: 700;
+  font-size: 1.15rem;
+  text-decoration: none;
+}
+
+.navbar-brand .icono-marca {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.navbar-toggle {
+  display: none;
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 0.4rem 0.6rem;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: var(--color-primary-dark);
+}
+
+.navbar-links {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.navbar-links a {
+  color: var(--color-text-muted);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.55rem 0.9rem;
+  border-radius: var(--radius-sm);
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.navbar-links a:hover {
+  background-color: var(--color-primary-light);
+  color: var(--color-primary-dark);
+}
+
+.navbar-links a.activo {
+  background-color: var(--color-primary);
+  color: var(--color-surface);
+}
+
+@media (max-width: 720px) {
+  .navbar-toggle {
+    display: inline-flex;
+  }
+
+  .navbar-links {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+    flex-direction: column;
+    padding: 0.5rem;
+    box-shadow: var(--shadow-md);
+    display: none;
+  }
+
+  .navbar-links.abierto {
+    display: flex;
+  }
+
+  .navbar-links a {
+    padding: 0.75rem 1rem;
+  }
+}
+
+/* ==========================================================================
+   Botones
+   ========================================================================== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.8rem 1.6rem;
+  border-radius: var(--radius-pill);
+  text-decoration: none;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.15s ease;
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.btn-primario {
+  background-color: var(--color-primary);
+  color: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-primario:hover:not(:disabled) {
+  background-color: var(--color-primary-dark);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-secundario {
+  background-color: var(--color-surface);
+  color: var(--color-primary);
+  border: 2px solid var(--color-primary);
+}
+
+.btn-secundario:hover:not(:disabled) {
+  background-color: var(--color-primary-light);
+}
+
+.btn-bloque {
+  width: 100%;
+}
+
+/* ==========================================================================
+   Tarjetas genéricas
+   ========================================================================== */
+.tarjeta {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem;
+  margin-top: 1.5rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.tarjeta-titulo-seccion {
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto 1.5rem;
+}
+
+.aviso-legal {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  background-color: var(--color-primary-light);
+  border-radius: var(--radius-sm);
+  margin-top: 1.5rem;
+  padding: 0.85rem 1rem;
+}
+
+/* ==========================================================================
+   Hero (Home)
+   ========================================================================== */
+.hero {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 2.5rem;
+  align-items: center;
+  padding: 2.5rem 0 1rem;
+}
+
+.hero-texto h1 {
+  font-size: clamp(1.9rem, 3.4vw, 2.6rem);
+  margin-bottom: 0.9rem;
+}
+
+.hero-texto p {
+  font-size: 1.08rem;
+  color: var(--color-text-muted);
+  max-width: 520px;
+}
+
+.acciones {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 1.6rem;
+}
+
+.hero-ilustracion {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-ilustracion svg {
+  width: 100%;
+  max-width: 340px;
+  height: auto;
+}
+
+@media (max-width: 860px) {
+  .hero {
+    grid-template-columns: 1fr;
+    text-align: center;
+    padding-top: 1.5rem;
+  }
+
+  .hero-texto p {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .acciones {
+    justify-content: center;
+  }
+
+  .hero-ilustracion {
+    order: -1;
+  }
+
+  .hero-ilustracion svg {
+    max-width: 220px;
+  }
+}
+
+/* ==========================================================================
+   Cómo funciona (pasos)
+   ========================================================================== */
+.pasos {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+}
+
+.paso {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.paso-numero {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background-color: var(--color-accent-light);
+  color: var(--color-primary-dark);
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+}
+
+.paso h3 {
+  margin-bottom: 0.4rem;
+  font-size: 1.05rem;
+}
+
+.paso p {
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+@media (max-width: 720px) {
+  .pasos {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ==========================================================================
+   Problema / Solución / Modelo de negocio
+   ========================================================================== */
+.dos-columnas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.dos-columnas .tarjeta {
+  margin-top: 0;
+}
+
+@media (max-width: 720px) {
+  .dos-columnas {
+    grid-template-columns: 1fr;
+  }
+}
+
+.plan {
+  background-color: var(--color-primary-light);
+  border-radius: var(--radius-md);
+  padding: 1.1rem 1.25rem;
+}
+
+.plan + .plan {
+  margin-top: 0.9rem;
+}
+
+.plan h3 {
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.plan p {
+  color: var(--color-text-muted);
+  margin: 0;
+  font-size: 0.92rem;
+}
+
+.etiqueta-modelo {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  background: var(--color-accent-light);
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-pill);
+  margin-bottom: 0.5rem;
+}
+
+/* ==========================================================================
+   Footer
+   ========================================================================== */
+.footer {
+  border-top: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+  margin-top: 2.5rem;
+  padding: 1.5rem 1.25rem;
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 0.88rem;
+}
+
+.footer strong {
+  color: var(--color-primary-dark);
+}
+
+/* ==========================================================================
+   Formulario de triage
+   ========================================================================== */
+.formulario-tarjeta {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.formulario-encabezado {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.formulario-encabezado p {
+  color: var(--color-text-muted);
+}
+
+form.formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.fila-campos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+@media (max-width: 560px) {
+  .fila-campos {
+    grid-template-columns: 1fr;
+  }
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.campo label {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.campo-ayuda {
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+}
+
+.campo input[type="text"],
+.campo input[type="number"],
+.campo textarea {
+  padding: 0.7rem 0.85rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  font-family: inherit;
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.campo input[aria-invalid="true"],
+.campo textarea[aria-invalid="true"] {
+  border-color: var(--color-danger-text);
+}
+
+.campo input[type="text"]:focus,
+.campo input[type="number"]:focus,
+.campo textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-light);
+}
+
+.error-campo {
+  color: var(--color-danger-text);
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.error-general {
+  background: var(--color-danger-bg);
+  color: var(--color-danger-text);
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+}
+
+/* Escala de dolor */
+.escala-dolor {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 0.4rem;
+}
+
+@media (max-width: 480px) {
+  .escala-dolor {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+.escala-dolor button {
+  padding: 0.6rem 0;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--color-border);
+  background-color: var(--color-surface);
+  font-weight: 700;
+  cursor: pointer;
+  color: var(--color-text);
+  transition: all 0.12s ease;
+}
+
+.escala-dolor button:hover {
+  border-color: var(--color-primary);
+}
+
+.escala-dolor button.seleccionado {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-surface);
+}
+
+.escala-dolor-leyenda {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  margin-top: 0.3rem;
+}
+
+/* Tarjetas de síntomas (checkboxes) */
+.grupo-sintomas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.85rem;
+}
+
+@media (max-width: 560px) {
+  .grupo-sintomas {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sintoma-card {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 0.85rem 1rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.sintoma-card:hover {
+  border-color: var(--color-primary);
+}
+
+.sintoma-card.activo {
+  border-color: var(--color-primary);
+  background-color: var(--color-primary-light);
+}
+
+.sintoma-card input[type="checkbox"] {
+  width: 1.15rem;
+  height: 1.15rem;
+  accent-color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.sintoma-card .sintoma-icono {
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.sintoma-card .sintoma-texto {
+  font-weight: 600;
+  font-size: 0.94rem;
+}
+
+/* Estado de carga */
+.estado-carga {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 2.5rem 1rem;
+  color: var(--color-text-muted);
+}
+
+.spinner {
+  width: 1.2rem;
+  height: 1.2rem;
+  border-radius: 50%;
+  border: 3px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  animation: girar 0.8s linear infinite;
+}
+
+@keyframes girar {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.btn .spinner {
+  border-color: rgba(255, 255, 255, 0.4);
+  border-top-color: var(--color-surface);
+}
+
+/* Estado vacío */
+.estado-vacio {
+  text-align: center;
+  padding: 2.5rem 1rem;
+  color: var(--color-text-muted);
+}
+
+.estado-vacio .icono {
+  font-size: 2rem;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+/* ==========================================================================
+   Resultado
+   ========================================================================== */
+.resultado-tarjeta {
+  max-width: 640px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.resultado-indicador {
+  width: 6.5rem;
+  height: 6.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0.5rem auto 1rem;
+  color: var(--color-surface);
+  font-size: 1.9rem;
+  font-weight: 800;
+  border: 6px solid var(--color-bg);
+  box-shadow: var(--shadow-md);
+}
+
+.resultado-paciente {
+  color: var(--color-text-muted);
+  margin-bottom: 0.25rem;
+}
+
+.badge-nivel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 1.1rem;
+  border-radius: var(--radius-pill);
+  color: var(--color-surface);
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.resultado-detalle {
+  text-align: left;
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.resultado-fila {
+  border-top: 1px solid var(--color-border);
+  padding-top: 0.9rem;
+}
+
+.resultado-fila span.etiqueta {
+  display: block;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--color-text-muted);
+  margin-bottom: 0.2rem;
+}
+
+/* ==========================================================================
+   Dashboard
+   ========================================================================== */
+.dashboard-encabezado {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.dashboard-encabezado p {
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.tarjetas-resumen {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+@media (max-width: 900px) {
+  .tarjetas-resumen {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .tarjetas-resumen {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.tarjeta-resumen {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-left: 5px solid var(--color-primary);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.1rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.tarjeta-resumen .cabecera-resumen {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.4rem;
+}
+
+.tarjeta-resumen .icono {
+  font-size: 1.1rem;
+}
+
+.tarjeta-resumen .numero {
+  font-size: 1.9rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.tarjeta-resumen .etiqueta {
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  margin-top: 0.3rem;
+}
+
+/* Filtro por nivel */
+.filtro-nivel {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.filtro-nivel button {
+  border: 1.5px solid var(--color-border);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  padding: 0.45rem 1rem;
+  border-radius: var(--radius-pill);
+  font-weight: 600;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.filtro-nivel button:hover {
+  border-color: var(--color-primary);
+}
+
+.filtro-nivel button.activo {
+  background-color: var(--color-primary-dark);
+  border-color: var(--color-primary-dark);
+  color: var(--color-surface);
+}
+
+.tabla-wrapper {
+  overflow-x: auto;
+  margin-top: 0.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+table.tabla-registros {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 640px;
+}
+
+table.tabla-registros th,
+table.tabla-registros td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--color-border);
+  text-align: left;
+}
+
+table.tabla-registros th {
+  background-color: var(--color-primary-light);
+  color: var(--color-primary-dark);
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  position: sticky;
+  top: 0;
+}
+
+table.tabla-registros tbody tr:hover {
+  background-color: var(--color-bg);
+}
+
+table.tabla-registros tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.etiqueta-nivel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--radius-pill);
+  color: var(--color-surface);
+  font-weight: 700;
+  font-size: 0.82rem;
+}
+

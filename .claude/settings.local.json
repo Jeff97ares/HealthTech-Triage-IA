@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -m py_compile app/main.py app/models.py app/schemas.py app/database.py app/triage_engine.py app/llm_connector.py)",
+      "Bash(python -c \"import fastapi, sqlalchemy, pydantic, dotenv; print\\('fastapi', fastapi.__version__\\); print\\('sqlalchemy', sqlalchemy.__version__\\); print\\('pydantic', pydantic.__version__\\)\")",
+      "Bash(DATABASE_URL=\"postgresql://postgres:postgres@localhost:5432/healthtech_triage_test\" python *)",
+      "Bash(python *)",
+      "Bash(npm --version)",
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "Bash(nohup uvicorn app.main:app --reload --port 8000)",
+      "Bash(echo \"PID: $!\")",
+      "Read(//c/Users/luis-/AppData/Local/Temp/claude/C--Users-luis--Desktop-healthtech-triage/b26762b4-b4fe-4de5-877e-55f9e0b3f6ba/scratchpad/**)",
+      "Bash(curl -s http://127.0.0.1:8000/)",
+      "Bash(curl -s http://127.0.0.1:8000/estadisticas)",
+      "Bash(netstat -ano)",
+      "Bash(taskkill //F //PID 20868)",
+      "Bash(taskkill //F //PID 7292)",
+      "Bash(curl -s http://127.0.0.1:8001/)",
+      "Bash(curl -s http://127.0.0.1:8001/estadisticas)",
+      "Bash(curl -s -X POST http://127.0.0.1:8001/triage -H 'Content-Type: application/json' -d '{ *)",
+      "Bash(taskkill //F //PID 18452)",
+      "Bash(taskkill //F //PID 4788)",
+      "Bash(nohup uvicorn app.main:app --reload --port 8001)",
+      "Bash(curl -s -i -X OPTIONS http://127.0.0.1:8001/triage -H 'Origin: http://localhost:5174' -H 'Access-Control-Request-Method: POST' -H 'Access-Control-Request-Headers: Content-Type')",
+      "Bash(curl -s -X POST http://127.0.0.1:8001/triage -H 'Content-Type: application/json' -H 'Origin: http://localhost:5174' -d '{ *)"
+    ]
+  }
+}
